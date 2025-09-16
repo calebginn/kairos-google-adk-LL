@@ -25,13 +25,37 @@ agent_tools = [
 # Load environment variables
 load_dotenv()
 
-# Verify API key is available
-anthropic_api_key = os.getenv("ANTHROPIC_API_KEY")
-if not anthropic_api_key or anthropic_api_key == "your_api_key_here":
-    print("Error: ANTHROPIC_API_KEY environment variable is not set.")
-    print("Please create a .env file with your API key:")
-    print("ANTHROPIC_API_KEY=your_actual_api_key_here")
-    sys.exit(1)
+def get_model():
+    """Get the appropriate LiteLLM model based on available API keys."""
+    anthropic_api_key = os.getenv("ANTHROPIC_API_KEY")
+    google_api_key = os.getenv("GOOGLE_API_KEY")
+    openai_api_key = os.getenv("OPENAI_API_KEY")
+
+    if anthropic_api_key and anthropic_api_key != "your_api_key_here":
+        print("Using Anthropic Claude model")
+        return LiteLlm(
+            model="anthropic/claude-3-5-haiku-20241022",
+            max_tokens=4096
+        )
+    elif google_api_key:
+        print("Using Google Gemini model")
+        return LiteLlm(
+            model="gemini/gemini-1.5-pro",
+            max_tokens=4096
+        )
+    elif openai_api_key:
+        print("Using OpenAI GPT model")
+        return LiteLlm(
+            model="openai/gpt-4",
+            max_tokens=4096
+        )
+    else:
+        print("Error: No valid API key found.")
+        print("Please set one of the following environment variables:")
+        print("- ANTHROPIC_API_KEY=your_anthropic_api_key")
+        print("- GOOGLE_API_KEY=your_google_api_key")
+        print("- OPENAI_API_KEY=your_openai_api_key")
+        sys.exit(1)
 
 # Load agent instructions from file
 def load_instructions():
@@ -45,10 +69,7 @@ INSTRUCTIONS = load_instructions()
 # Create the agent
 agent = LlmAgent(
     name="demo_file_agent",
-    model=LiteLlm(
-        model="anthropic/claude-3-5-sonnet-20241022",  # Using a stable model
-        max_tokens=4096
-    ),
+    model=get_model(),
     instruction=INSTRUCTIONS,
     description="A simple file management agent for demonstrations.",
     tools=agent_tools
