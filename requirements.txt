@@ -1,0 +1,11 @@
+# Core Google ADK dependencies
+google-adk
+litellm
+python-dotenv
+
+# Database for sessions
+sqlalchemy
+
+# Optional but recommended
+uvicorn
+fastapi
