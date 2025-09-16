@@ -1,24 +1,41 @@
 # Demo File Agent Tutorial
 
-This is a minimal file agent implementation using the Google ADK framework. It demonstrates the basic components needed to create a file agent that can read, write, and list files.
+This is a minimal file agent implementation using the Google ADK framework. It demonstrates the basic components needed to create a file agent that can read, write, and list files in a sandboxed workspace.
 
 ## Setup
 
-1. **Install dependencies:**
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd kairos_ll_demo
+   ```
+
+2. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
 
-2. **Configure API keys:**
-   - Copy `.env` file and add your actual API keys
-   - At minimum, you need an `ANTHROPIC_API_KEY`
+3. **Create environment file:**
+   Create a `.env` file in the root directory with one of the following API keys:
+   ```bash
+   # Option 1: Anthropic (Claude) - recommended
+   ANTHROPIC_API_KEY=your_anthropic_api_key_here
+
+   # Option 2: Google (Gemini)
+   GOOGLE_API_KEY=your_google_api_key_here
+
+   # Option 3: OpenAI (GPT-4)
+   OPENAI_API_KEY=your_openai_api_key_here
+   ```
+   The agent will automatically detect and use whichever key you provide (in that priority order).
 
 3. **Run the agent:**
 
    **Option A: Command Line Interface**
    ```bash
-   python agent.py "List files in the current directory"
+   adk run agents/file_agent
    ```
+   This starts an interactive chat session with the agent.
 
    **Option B: Web UI Interface (Recommended for Tutorials)**
    ```bash
@@ -32,45 +49,55 @@ This is a minimal file agent implementation using the Google ADK framework. It d
 
 ## Components
 
-### Core Files
+### File Structure
 
-- **`agent.py`** - Main agent implementation with ADK setup
-- **`api.py`** - HTTP API server with web UI interface
-- **`start_web_ui.py`** - Quick-start script with dependency checking
-- **`tools/file_tools.py`** - Basic file operation functions
-- **`.env`** - Environment configuration (API keys)
-- **`requirements.txt`** - Python dependencies
+```
+kairos_ll_demo/
+├── agents/
+│   └── file_agent/
+│       ├── agent.py              # Main agent implementation
+│       └── instructions.txt      # Agent behavior instructions
+├── tools/
+│   └── file_tools.py            # File operation functions
+├── agent_workspace/             # Sandboxed workspace for agent
+│   └── sample.txt              # Example file
+├── api.py                      # HTTP API server with web UI
+├── start_web_ui.py            # Quick-start script
+├── .env                       # Environment configuration (create this)
+├── requirements.txt           # Python dependencies
+└── README.md                  # This file
+```
 
-### Key Concepts
+### Key Features
 
-1. **Tools** - Python functions that the agent can call (`read_file`, `write_file`, `list_files`)
-2. **Agent** - LlmAgent configured with tools and instructions
-3. **Runner** - Executes the agent with session management
-4. **Services** - Session and memory services for state management
+1. **Multi-Model Support** - Automatically detects and uses Anthropic Claude, Google Gemini, or OpenAI GPT-4
+2. **Sandboxed Workspace** - Agent operates within `agent_workspace/` directory for safety
+3. **File Operations** - Read, write, and list files with built-in tools
+4. **External Instructions** - Agent behavior defined in separate `instructions.txt` file
+5. **Web UI & API** - Both interactive web interface and programmatic API access
 
 ## Example Usage
 
 ### Command Line Examples
 
+Start an interactive session with:
 ```bash
-# Read a file
-python agent.py "Read the contents of README.md"
-
-# Write a file
-python agent.py "Write 'Hello World' to a file called hello.txt"
-
-# List files
-python agent.py "What files are in the current directory?"
+adk run agents/file_agent
 ```
+
+Then try these prompts:
+- "Read the contents of sample.txt"
+- "Write 'Hello World' to a file called hello.txt"
+- "What files are in the workspace?"
 
 ### Web UI Examples
 
-1. Start the server: `python api.py`
+1. Start the server: `python start_web_ui.py`
 2. Open http://localhost:8080 in your browser
 3. Try these prompts in the chat interface:
-   - "List all files in the current directory"
+   - "List all files in the workspace"
+   - "Read the sample.txt file"
    - "Create a new file called test.txt with the content 'Hello from the web UI!'"
-   - "Read the contents of the file we just created"
    - "What files do we have now?"
 
 ### API Server Options
@@ -86,13 +113,21 @@ python api.py --disable-web-ui
 python api.py --port 9000
 ```
 
+## Agent Workspace
+
+The agent operates in a sandboxed `agent_workspace/` directory containing:
+- `sample.txt` - Example file for testing read operations
+- Any files created by the agent will appear here
+- The agent cannot access files outside this directory
+
 ## Tutorial Notes
 
-This demo strips away the complexity of the full repository to focus on:
+This demo focuses on ADK fundamentals:
 
-- Basic ADK agent setup
-- Simple tool registration
-- File operations
-- Session management
+- Multi-model LLM integration (Claude/Gemini/GPT-4)
+- Sandboxed file operations with custom tools
+- External instruction configuration
+- Both CLI and web interfaces
+- Session and memory management
 
-Perfect for learning the fundamentals before exploring more advanced features like vector stores, document processing, and streaming.
+Perfect for learning core concepts before exploring advanced features like vector stores, document processing, and streaming.

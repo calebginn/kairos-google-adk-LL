@@ -62,3 +62,4 @@ agent_workspace/
 # Logs
 *.log
 logs/
+.env.keys
