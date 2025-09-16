@@ -16,6 +16,12 @@ from google.genai import types
 # Import our simple file tools
 from tools.file_tools import read_file, write_file, list_files
 
+agent_tools = [
+#    read_file, 
+#    write_file, 
+   list_files 
+]
+
 # Load environment variables
 load_dotenv()
 
@@ -45,7 +51,7 @@ agent = LlmAgent(
     ),
     instruction=INSTRUCTIONS,
     description="A simple file management agent for demonstrations.",
-    tools=[read_file, write_file, list_files]
+    tools=agent_tools
 )
 
 # Create session and memory services
